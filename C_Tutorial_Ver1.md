@@ -199,7 +199,7 @@ int putchar(int c);
 - scanf가 입력받는 변수 앞에는 항상 &을 쓴다. 문제열 제외
 
 ```
-int main (void
+int main (void)
 {
 	int nSamp1, nSamp2, nSamp3;
 	printf("세 개의 정수 입력: ");
@@ -602,22 +602,24 @@ ar1Len = sizeof(arr1) / sizeof(int); //  이래야지 배열의 길이를 계산
 char str[14]= "Good Morning!";
 //배열로 저장될 때, 문자열의 끝에는 널문자라고 불리는 \0가 삽입된다. 문자열의 끝을 의미한다
 //널문자가 공백문자는 아니다
-
 ```
+
 
 - scanf 함수를 통해 입력받을 때 &연산자를 쓰지 않아도 된다
 
 ```
-scanf("%s", str); 
+scanf("%s", str); //이 때도 널문자가 뒤에 붙어서 저장된다
+
+//하지만 scanf는 공백을 기준으로 문자열을 구분하므로 문장을 입력받기엔 적절치 않음
+// 다른 함수가 있다.
 ``` 
  
 
 ###배열과 포인터의 관계
 
-- 배열의 이름은 포인터이다. 하지만 그냥 포인터 변수와의 차이는 주소값의 변경이 불가하다는 것이다. 그리고 앞의 포인터의 속성에서 보았듯이, 포인터가 가르키는 건 시작지점이다. 자료형의 크기에 따라 끝이 결정되기 때문. 배열의 이름도 첫째요소를 가르키는 것. 
+- 포인터 변수를 이용해 배열의 형태의 메모리 공간에 접속
 
 ```
-
 int main(void)
 {
 	int arr[3] = {1,2,3}; //여기선  int로 선언되었으므로 arr도 int형 포인터변수
@@ -632,7 +634,6 @@ int main(void)
 - 포인터 변수를 이용해 배열의 형태로 메모리 공간에 접속
 
 ```
-
 int main(void)
 {
 	int arr[3] = {1,2,3}; 
@@ -646,6 +647,7 @@ int main(void)
 	}
 ```
 
+- 포인터 연산
 
 ```
 int main(void)
@@ -665,7 +667,10 @@ int main(void)
 
 ```
 
-- 배열이름도 포인터이니, 포인터 변수를 이용한 배열의 접근방식을 배열의 이름에 도 사용할 수 있다. 그리고 배열의 이름을 이용한 접근방식도 포인터 변수를 대상 으로 사용할 수 있다. 결론은 arr이 포인터 변수의 이름이건 배열의 이름이건arr[i] == *(arr+i)
+- 배열이름도 포인터이니, 포인터 변수를 이용한 배열의 접근방식을 배열의 이름에도 사용할 수 있다. 
+- 그리고 배열의 이름을 이용한 접근방식도 포인터 변수를 대상으로 사용할 수 있다. 
+- arr이 포인터 변수의 이름이건 배열의 이름이건 arr[i] == *(arr+i)
+
 
 ###문자열과 포인터
 
@@ -680,30 +685,28 @@ char str1[] = "Your team";str1 = "Our team"; //대입 불가.
 
 ```
 
+
 - str1은 문자열이 저장된 배열이다. 즉, 문자 배열이다. 따라서 변수성향의 문자열이다. str2는 문자열의 주소 값을 저장한다. 즉, 자동 할당된 문자열의 주소 값을 저장한다. 따라서 상수성향의 문자열이다.
-- 뭐 이건 앞에서 배열과 포인터에서 설명한것과 동일 앞에서도 배열을 포인터변수에 할당하면 주소값 바꿀 수 있었지만 배열이름은 주소값을 바꿀 수 없엇음 
 
 - str1 처럼 선언하나 str2 처럼 선언하나, str1, str2 둘 다 문자열의 시작주소를 담고 있는 것은 같다. 
 
 ```
-
-char str1[ ] = "My String";
-char * str2 = "Your String";
-
 int main(void){
-    char str1[ ] = "My String";
-    char * str2 = "Your String";
+	char str1[ ] = "Suhee Jo";
+	char * str2 = "Weback Kim";
+    
+    str2 = "HyeBin Yoon"; // str2는 가리키는 대상을 변경가능. str1는 불가
+    
     str1[0] = 'x';
-    str2[0] = 'x'; //변경 불가
+    str2[0] = 'x'; // str2는 구성요소 변경 불가
 }
-
 ```
 
 - 즉 str1과 같은 문자 배열은, 변수성향의 문자열이고, 구성요소를 바꿀 수는 있지만, 다른 값을 가리키게 할 수는 없다. str2은 그 반대
 
 
 ```
-char * str = "Const String";
+char * str = "Const String"; //"Const String"은 상수형태의 문자열이고 메모리 어딘가에 저장된다
 char * str = 0x1234; // 위의 라인이 실행되면 사실상 다음과 같이 저장되는 것이다
 ```
 
@@ -719,155 +722,31 @@ int main (void) {
 	printf("%d \n",  *arr[0]); //*연산자 뜻 알지? 메모리 번지 참조해서 값을 가져와 라는 뜻
 	printf("%d \n",  *arr[1]);
 	printf("%d \n",  *arr[2]);
-	// 프린트 되는 값은 10 20 30
+	// 프린트 되는 값은 10 20 30 arr[i]는 각 메모리주소를 뜻하고 이것이 가리키는 건 해당값이다
 	
 }
 ```
 
-- 문자열을 저장하는 포인터 배열
+- 문자열을 저장하는 포인터 배열 : char 형 포인터 배열. 실제로 저장하는 건 문자열의 주소값
 
 ```
 	char * strArr[3] = {"Simple", "String", "Array"}; //문자열 선언
-	//큰 따옴표로 묶여서 표현되는 문자열은 그 형태에 상관없이 메모리 공간에 저장된 후 그 주소 값이 반환된다	char * strArr[3] = {0x1004, 0x1048, 0x2012)
+	//큰 따옴표로 묶여서 표현되는 문자열은 그 형태에 상관없이 메모리 공간에 저장된 후 그 주소 값이 반환된다	
+	char * strArr[3] = {0x1004, 0x1048, 0x2012)
 	//그니까 실제로는 이렇게 됨	
-
-```
-- 느꼈겠지만 문자열은 그냥 배열하고는 또 다르다. 너무 깊게 이해하려고 하지는 말고 그냥 그렇구나 느낌으로 읽어야하겠다.
-
-### 함수와 포인터
-
-- 함수 호출 시 전달되는 인자(argument)의 값은 매개변수(parameter)에 복사가 된다
-- 하지만 매개변수로 배열을 선언할 수 없기때문에, 함수 내에서 배열에 접근할 수 있도록 배열의 주소값을 전달하게 할 수 있다.
-
-```
-void ShowArayElem(int * param) //int형 포인터변수로 매개변수 설정
-//매개변수는 int param[] 이렇게도 설정가능 하다. 하지만 이것은 매개변수 설정에만 그런 것이고
-// int arr[3] = {1,2,3};
-// int * ptr = arr; 를 int * ptr[] = arr; 이렇게 못함
-{
-	int i;
-	for(i=0; i<len; i++)
-		printf("%d ", param[i]);
-	printf("\n");
-}
-
-int main(void)
-{
-	int arr1[3] = {1,2,3};
-	int arr2[5] = {4,5,6,7,8};
-	ShowArayElem(arr1,
-}
-
-void AddArayElem(int * Param, int len, int add)
-{
-	int i;
-	for(i=0; i<len; i++)
-		param[i] += add;
-}
-
-```
-- 배열의 값 변경도 가능하다
-
-
-- Call by value vs Call by reference
-- 함수를 호출할 때 단순히 값을 전달하는지, 아니면 주소값을 전달하는지. (전자, 후자)
-- 아까 배열을 인자로 전달하는 함수는 Call by reference. 보통 우리가 정의했던 함수들은 Call by value
-
-- Call by reference 함수가 Call by value 함수와 다른 점은 Call by value 함수는 전달받은 인자의 값을 복사해서 함수 결과값을 돌려주지만, 인자 자체에는 손댈 수 없는 반면에 Call by reference는 인자 자체에 접근할 수 있다는 점이다
-
-```
-void Swap(int n1, int n2)
-{
-	int temp = n1;
-	n1 = n2;
-	n2 = temp;
-	printf("n1 n2: %d %d \n", n1, n2);
-} 
-
-int main(void)
-{
-	int num1 = 10;
-	int num2 = 20;
-	printf("num1 num2: %d %d \n", num1, num2);
-	 
-	Swap(num1, num2);
-	printf("num1 num2: %d %d \n", num1, num2);
-	retrun 0
-
-//실행결과
-// num1 num2 : 10 20
-// n1 n2 : 20 10
-// num1 num2 : 10 20 //num1 과  num2는 변하지 않은 것을 볼 수 있다
-
-}
-```
-
-- 그러면 어떻게  Swap함수의 결과로 num1 num2 값을 서로 바꿀 수 있지?
-
-
-```
-void Swap(int * ptr1, int *ptr2)
-{
-	int temp = *ptr1;
-	*ptr1 = *ptr2;
-	*ptr2 = temp;
-} 
-
-```
-
-- 그러면 이제 scanf 함수 호출 시 &연산자붙이는 이유 알겠지? 문자열에 왜 안 붙이는 지도? 문자열이 저장될 배열의 이름은 그 자체로 주소값
-
-```
-int main(void)
-{
-	int num; //num에 사용자 입력값을 대입하기 위해선 주소값을 알아야해 (call by reference)
-	scanf("%d", &num)' //변수num의 주소값을 scanf에 전달
-}
-```
-
-- 포인터 대상의 const 선언
-
-```
-int main(void)
-{
-	int num =20;
-	const int * ptr = &num; //포인터 변수 ptr을 이용해서 ptr이 가리키는 변수에 ...
-	//저장된 값을 변경하는 것을 허용하지 않는다
-	// int * const ptr = &num; 이렇게 하면 포인터변수 ptr이 상수가 된다.
-	// 이 말은, 한 번 가리키기 시작한 변수를 끝까지 가리켜야 한다는 것
-	* ptr = 30; //컴파일 에러
-	num = 40; //컴파일 성공
-}
-
-
-```
-
-```
-int main(void)
-{
-	int num =20;
-	int num2 =30;
-	int * const ptr = &num; 
-	ptr = &num2 //컴파일 에러
-	*ptr = 30; //컴파일 성공
-	// const int * cosnt ptr = &num; 이렇게 둘 다 선언가능
-	//그러면 포인터변수를 사용해서 변수의 값을 바꾸는 거나, 포인터변수를 바꾸는 거나 둘 다 안댐
-}
-
 
 ```
 
 ### 다차원배열
 
-- 다차원배열에서 주로 거의 다루는 건 2차원 배열. 선언은  Type arr[세로길이][가로길이]; 이렇게 한다
+- 다차원배열에서 주로 거의 다루는 건 2차원 배열. 선언은 Type arr[세로길이][가로길이]; 
 
 ```
 int main (void){
-
 	int arr1[3][4]; //세로(행)가 3 가로(열) 4
 	printf("세로3 가로4: %d \n", sizeof(arr1)); // sizeof 연산자의 피연산자로
 	//배열의 이름이 오면, 배열의 크기가 바이트 단위로 계산되어서 반환됨
-	// 여기선 3x4x4 = 48
+	//여기선 3x4x4 = 48
 }
 ```
 
@@ -877,8 +756,6 @@ int main (void){
 arr[N-1][M-1] = 20; //이런 식으로 접근해서 값을 변경할 수 있다
 ```
 
-- 2차원 배열의 메모리상 할당 형태 : 컴퓨터 메모리상에서는 1차원으로 저장되어있다!
-- 만약 행길이3, 열길이2 인 int형 배열을 0~5로 초기화했다면 arr[0][0], arr[0][1], arr[1][0], arr[1][1], arr[2][0], arr[2][1] 이 각각 값이 0,1,2,3,4,5 인 채로 일렬로 메모리에 저장되어 있다. 배열요소 별 주소값은 int형 변수의 크기인 4바이트만큼 차이. 
 
 - 2차원 배열 선언과 동시에 초기화
 
@@ -900,43 +777,8 @@ int arr[2][] = {1,2,3,4,5,6,7,8}; //성공
 
 ###다차원 배열과 포인터
 
-- 1차원 배열이름의 포인터 형은?
-
-ex) int arr[10]; //arr 은 int형 포인터
-따라서 함수의 인자로 SimpleFunc(arr); 이렇게 전달되기 위해서는
-void SimpleFunc(int*ptr){...} 이렇게 선언되어야 한다
-
-- 2차원 배열의 이름은 그러면 더블 포인터인가?? -> 개소리. 아님
-
-- 예를 들어 int arr2d[3][3]; 우리가 앞에서 계속 봤듯이 arr2d란 배열이름이 가리키는 위치는 배열 중에서도 인덱스 기준으로 [0][0] 즉 제일 첫번째 요소이다. 
-- 그런데 2차원 배열은 arr2d[0], arr2d[1], arr2d[2] 도 의미를 갖는다. 각각 1행,2행,3행의 첫번째 요소를 가리킨다.
-
-```
-int main(void)
-{
-	int arr2d[3][3];
-	printf("%d \n", arr2d); //4585464
-	printf("%d \n", arr2d[0]); //4585464
-	printf("%d \n\n", &arr2d[0][0]); //4585464
-	
-	printf("%d \n", arr2d[1]); //4585476
-	printf("%d \n", &arr2d[1][0]); //4585476
-	
-	printf("%d \n", arr2d[2]); //4585488
-	printf("%d \n", &arr2d[2][0]); //4585488
-	
-	printf("sizeof(arr2d): %d \n", sizeof(arr2d));
-	 //sizeof(arr2d): 36  //arr2d대상으로 sizeof연산하면 배열전체 크기 반환
-	printf("sizeof(arr2d[0]): %d \n", sizeof(arr2d[0])); 
-	//sizeof(arr2d[0]): 12 //arr2d[0]대상으로 할 경우 각 행의 크기 반환
-	printf("sizeof(arr2d[1]): %d \n", sizeof(arr2d[1]));
-	//sizeof(arr2d[1]): 12
-	printf("sizeof(arr2d[2]): %d \n", sizeof(arr2d[2]));
-	//sizeof(arr2d[2]): 12
-	return 0;
-}
-```
-
+- 2차원 배열의 이름도 배열의 첫번째 요소, 즉 arr[0][0]의 주소이다. 그러나 이에 대해 간접지정연산(*)을 수행하더라도 주소가 나온다. 왜냐하면 arr[0]도 하나의 배열이기 때문.
+- arr와 arr[0]의 주소값은 같지만, sizeof 연산을 하면 각 다르게 나온다. 
 - 포인터 형에 따라 포인터를 대상으로 하는 증가 및 감소 연산의 결과가 정해진다!
 
 ```
@@ -954,28 +796,18 @@ int main(void)
 }	
 ```
 
-- arr1을 대상으로 값을 1씩 증가시킬 때마다 8씩증가하고, arr2를 대상으로 값을 1 증가시킨 결과 12가 증가함
 - 2차원 배열이름을 대상으로 증가 및 감소연산을 할 경우 연산결과는 각 행의 첫 번째 요소의 주소 값이 된다. 
-- 2차원 배열이름의 포인터 형은 가로 길이에 따라서도 달라진다!
-
-예를 들어서 int arr[3][4]; 의 포인터형을 물으면,  배열이름 arr이 가리키는 대상은 int형 변수이고 arr의 값을 1증가하면 실제로는 sizeof(int)x4만큼 주소값이 증가하는 포인터형이다
-
+- 2차원 배열이름의 포인터형은 가로 길이에 따라서도 달라진다!
 - 이러한 유형의 포인터 변수 선언은 다음과 같이 한다
-
-예를 들어서 int 형 변수를 가리키면서 포인터 연산시 sizeof(int)x4의 크기단위로 증감하는 포인터 변수ptr은
-int(*ptr)[4]; 이다. *로 ptr을 포인터 선언이 되게 한 후 [4]는 4칸씩 건너뛴다는 뜻이며 ptr이 가리키는 변수가 int형이라 int형변수를 4칸씩 건너뛴다는 얘기
+	- 예를 들어서 int 형 변수를 가리키면서 포인터 연산시 sizeof(int)x4의 크기단위로 증감하는 포인터 변수ptr은 int (*ptr) [4]; 이다. 
 
 - 2차원 배열을 함수의 인자로 전달하기
 
-예를 들면 void SimpleFunc(int (*parr1)[7]) 이런식으로 정의하거나
-voidSimpleFunc(int parr1[][7])이런 식으로 선언. 하지만 두 개는 매개변수 선언에서만 같은 것
-
-void ShowArr2DStyle(int (*parr1)[7], int column)
-위와 같은 함수의 두 번째 인자가 필요한 이유는 첫번째 인자만으로는 2차원 배열의 세로길이(행길이)를 모르기 때문
-배열의 세로길이는 sizeof(arr1) / sizeof(arr1[0]) 이렇게 계산 많이 한다
+	- void SimpleFunc(int (*parr1)[7]) 혹은 voidSimpleFunc(int parr1[][7])로 선언. 	
+	- 하지만 두 개는 매개변수 선언에서만 같은 것
 
 ```
-void ShowArr2DStyle(int (*arr)[4]. int column) //배열요소 전체출력
+void ShowArr2DStyle(int (*arr)[4], int column) //배열요소 전체출력
 {
 	int i, j;
 	for(i =0, i<column; i++)
@@ -1012,6 +844,71 @@ int main(void)
 
 - 2차원 배열에서도 arr[i]와 *(arr+i)는 같다
 
+
+</br>
+
+
+### 함수와 포인터
+
+- 함수 호출 시 전달되는 인자(argument)의 값은 매개변수(parameter)에 복사가 된다
+- 하지만 매개변수로 배열을 선언할 수 없기때문에, 함수 내에서 배열에 접근할 수 있도록 배열의 주소값을 전달
+
+```
+void ShowArayElem(int * param) //int형 포인터변수로 매개변수 설정.매개변수는 int param[] 이렇게도 설정가능 
+{
+	int i;
+	for(i=0; i<len; i++)
+		printf("%d ", param[i]);
+	printf("\n");
+}
+
+int main(void)
+{
+	int arr1[3] = {1,2,3};
+	int arr2[5] = {4,5,6,7,8};
+	ShowArayElem(arr1, sizeof(arr1) / sizeof(int));
+	ShowArayElem(arr2, sizeof(arr2) / sizeof(int));
+	return 0
+}
+
+void AddArayElem(int * Param, int len, int add)
+{
+	int i;
+	for(i=0; i<len; i++)
+		param[i] += add;
+}
+
+```
+- 배열의 값 변경도 가능하다
+
+
+- Call by value vs Call by reference
+- 함수를 호출할 때 단순히 값을 전달하는지, 아니면 주소값을 전달하는지. (전자, 후자)
+- 아까 배열을 인자로 전달하는 함수는 Call by reference. 보통 우리가 정의했던 함수들은 Call by value
+
+- Call by reference 함수가 Call by value 함수와 다른 점은 Call by value 함수는 전달받은 인자의 값을 복사해서 함수 결과값을 돌려주지만, 인자 자체에는 손댈 수 없는 반면에 Call by reference는 인자 자체에 접근할 수 있다는 점이다
+
+
+- 포인터 대상의 const (상수) 선언
+
+```
+int main(void)
+{
+	int num =20;
+	const int * ptr = &num; //포인터 변수 ptr을 이용해서 ptr이 가리키는 변수에 ...
+	//저장된 값을 변경하는 것을 허용하지 않는다
+	// int * const ptr = &num; 이렇게 하면 포인터변수 ptr이 상수가 된다.
+	// 이 말은, 한 번 가리키기 시작한 변수를 끝까지 가리켜야 한다는 것
+	* ptr = 30; //컴파일 에러
+	num = 40; //컴파일 성공
+}
+
+
+```
+
+
+</br>
+
 ###함수포인터와 void 포인터
 
 - 프로그래머가 정의하는 모든 함수는 프로그램 실행 시 메인 메모리에 저장되어서 실행된다. 
@@ -1034,6 +931,8 @@ int WhoIsFirst(int age1, int age2, int (*cmp)(int n1, int n2))
 - void * ptr; 이렇게 선언
 - void 포인터는 형이 정해져 있지 않아서 연산도 못하고 값 변경, 참조도 못한다.
 
+
+</br>
 
 ## 구조체
 
@@ -1078,9 +977,9 @@ struct person
 };
 
 struct person man1;
-strcpy(man1.name, "안성준");
+strcpy(man1.name, "윤혜삔");
 
-struct person man2 = {"이승기","010-3030-2039",12};
+struct person man2 = {"조수희","010-3030-2039",12};
 ```
 
 ### 구조체와 배열 그리고 포인터
@@ -1092,7 +991,7 @@ struct person man2 = {"이승기","010-3030-2039",12};
 - 구조체 배열의 초기화
 
 ```
-struct person arr[3] = { {"이승기","010-3030-2039",12},  {"김위백","010-3453-2039",27}, {"조수희","010-9879-2039",23}}
+struct person arr[3] = { {"윤혜삔","010-3030-2039",12},  {"김위백","010-3453-2039",27}, {"조수희","010-9879-2039",23}}
 ```
 
 - 구조체 변수와 포인터
@@ -1150,11 +1049,11 @@ struct point
 
 ### 구조체의 정의와 typedef선언
 
-- 구조체 변수 선언 시에는 무조건 struct 선언이 추가 되어야 한다. 예를 들어서 struct person man 이렇게. 근데 앞의 struct 선언을 하기가 너무나 귀찮은 것이다. 그냥 person man 하고 싶은 것이다. 이 때 먼저 구조체를 정의한 뒤에 typedef를 추가하면 된다
 
-- typedef선언 기존에 존재하는 자료형의 이름에 새 이름을 부여하는 것을 목적으로 하는 선언. 새로운 이름의 부여는 가장 마지막 단어에 의해 이루어진다.
 
-예를 들면 typedef name1 name2 name3; 에서 가장 마지막의 name3 가 'name1 name2'에 부여된 새로운 이름이 되는 것이다. 
+- typedef선언: 기존에 존재하는 자료형의 이름에 새 이름을 부여하는 것을 목적으로 하는 선언. 새로운 이름의 부여는 가장 마지막 단어에 의해 이루어진다.
+
+	- 예를 들면 typedef name1 name2 name3; 에서 가장 마지막의 name3 가 'name1 name2'에 부여된 새로운 이름이 되는 것이다. 
 
 ```
 typedef unsigned int UNIT; // unsigned int 에 UNIT이란 이름 새로 부여!
@@ -1175,7 +1074,7 @@ typedef struct point //이런식으로도 선언가능.
 	int xpos;
 	int ypos;
 
-};
+}Point;
 
 typedef struct {
 	int xpos;
@@ -1189,7 +1088,7 @@ typedef struct {
 
 
 ```
-typedef struct {
+typedef struct point{
 	int xpos;
 	int ypos;
 
@@ -1208,7 +1107,75 @@ Point GetCurrentPostion(void) //구조체를 반환하는 함수이다
 	retrun cen;
 }
 
-//여기에서 정의된 함수들은 CallbyValue임을 잊지말자. 메모리주소(포인터)값을 전달하지 않는 경우 모두 CallbyValue. 즉 매개변수로 들어온 값들을 복사해서 함수 내에서 쓰는 것
+//여기에서 정의된 함수들은 CallbyValue임을 잊지말자. 
+//메모리주소(포인터)값을 전달하지 않는 경우 모두 CallbyValue. 
+//즉 매개변수로 들어온 값들을 복사해서 함수 내에서 쓰는 것
 ```
 
 - 구조체 변수를 대상으로 가능한 연산 : 대입연산(복사해서 값 집어넣기) , &연산, sizeof연산 정도.
+
+```
+typedef struct point
+{
+	int xpos;
+	int ypos;
+}
+ 
+
+int main (void)
+{
+	Point pos1 {1,2}
+}
+
+
+```
+
+- 중첩된 구조체: 먼저 정의된 구조체는 기본 자료형의 이름과 마찬가지로 사용될 수 있다
+
+```
+typedef struct point{
+	int xpos;
+	int ypos;
+
+}Point;
+
+typedef struct circle{
+	Point center;
+	double rad;
+
+}Circle;
+```
+
+### 공용체 
+
+- 공용체 : 선언 시 구조체와 차이는 구조체의 struct부분이 union 으로 바뀐다는 것이다.
+- 구조체 변수가 선언되면 그 안의 멤버들은 각각 메모리에 할당이 되지만, 공용체 변수가 선언되면 그 안 멤버들은 각각 할당되는 것이 아니라 크기가 가장 큰 멤버의 변수만 할당되고, 나머지 멤버들은 이를 공유한다.
+
+### 열거형
+
+- 저장이 가능한 값 자체를 정수의 형태로 결정. 구조체가 각 멤버에 저장할 값의 유형을 결정했다면, 이건 저장이 가능한 값 자체를 정수 형태로 결정
+
+```
+typedef enum juniors
+{
+	HyeBin = 1, Weback =2, Suhee =3
+}Juniors;
+
+void workload(Juniors jy)
+{
+	switch(jy)
+	{
+	case HyeBin:
+		puts("조금만 더 일하세요"); return;
+	case Weback:
+		puts("많이 더 일하세요"); return;
+	case Suhee:
+		puts("일하지 마세요"); return;
+	}
+}
+
+
+//여기서 HyeBin =1 의 뜻은 HyeBin을 1을 의미하는 상수로 정의. 
+그리고 이 값을 syllabe형 변수에 저장 가능하다는 뜻
+```
+- 만약 열거형 정의시 상수값 명시 안하면 기본적으로 첫 상수값은 0에서 시작해서 1씩 증가한다. 
