@@ -1262,6 +1262,46 @@ int WhoIsFirst(int age1, int age2, int (*cmp)(int n1, int n2))
 - void 포인터는 형이 정해져 있지 않아서 연산도 못하고 값 변경, 참조도 못한다.
 
 
+
+## 메모리의 동적 할당
+
+- 원할 때 메모리를 할당하고 해제할 수 있는 변수를 만들 때, malloc과 free 함수를 쓴다
+- 이 때 힙영역의 메모리에 할당된다
+- malloc 함수는 지정하는 크기만큼의 메모리 공간을 할당하고 그 메모리의 주소값을 반환하지만, 어떤 값을 가리킬지는 포인터변수를 통해 직접 결정해야한다
+
+```
+int main(void)
+{
+	int * ptr = (int*)malloc(sizeof(int));
+	
+	*ptr = 20;
+	
+	free(ptr);
+}
+
+```
+
+- calloc 함수는 malloc 함수와 동일하지만, 인자를 두 개로 받는다. 첫 인자는 블록의 개수, 두번째 인자는 블록 당 바이트 크기이다. 따라서 malloc에서 총 20 바이트를 할당받는다면 calloc 에서는 4,5로 표현가능하다.
+
+```
+#include <stdlib.h>
+
+int * a;
+a = (int*)calloc(n, sizeof(int));
+```
+
+- realloc 함수는 이미 할당된 메모리를 확장해준다
+
+```
+#include <stdlib.h>
+
+   char *str;
+   str = (char *) malloc(15);
+   str = (char *) realloc(str, 25);
+
+```
+
+
 ## 구조체
 
 - 구조체는 하나 이상의 변수를 묶어서 새로운 자료형을 정의하는 도구
@@ -1309,6 +1349,7 @@ strcpy(man1.name, "김위백");
 
 struct person man2 = {"윤혜삔","010-3030-2039",12};
 ```
+
 
 ### 구조체와 배열 그리고 포인터
 
@@ -1515,3 +1556,92 @@ void workload(Juniors jy)
 > enum color {RED =3, BLUE, WHITE=6, BLACK};
 > //이 경우 BLUE의 상수값은 앞의 상수값보다 1이 증가. 
 > ```
+
+
+## 전처리기
+
+- 전처리기, 다른 말로는 선행처리기 (Preprocessor)는 컴파일 되기 전에 먼저 실행되는 구문
+
+> 선행처리를 거치면 원래 소스파일이 마찬가지로 소스파일로 나오게 되는데 다른 점은 일부가 수정된다는 것. 이 일부 수정은 단순 치환이 대부분.
+
+
+### 매크로
+
+- Object like macro : #define PI 3.1415
+	- 지시자 매크로 매크로몸체로 구성되어 있고, 매크로를 매크로몸체로 치환하라는 지시이다
+- Function like macro : #define SQUARE(X) X*X
+	- 지시자 패턴 유형으로 구성되어 있고, 패턴을 유형으로 치환하라는 지시이다
+	- 여기서는 SQUARE(X)라는 패턴이 등장하면 X*X로 무조권 바꾸라는 지시이다
+	- 먼저 정의된 매크로는 뒤에서도 사용가능
+
+> 위와 같은 예시의 경우 SQUARE(3+2) 가 나오면 3+2x3+2 이런식으로 11이 나온다. 이를 막기위해 SQUARE((X))이런식으로 괄호를 쳐줌. 혹은 int num = 120 / SQUARE(2); 의 경우 120/4 가 아닌 (120/2)x2 가 됨... 이를 막기 위해 유형을 (X*X) 요로케.
+
+- 매크로 함수의 장/단점
+	- 장점 : 일반함수에 비해 실행속도 빠르고 별도의 함수 정의가 필요 없음.
+	- 단점 : 정의하기 어렵고 디버깅도 어려움 
+	- 작지만 호출 빈도가 높은 함수를 정의하는 것이 좋다
+
+
+- 조건부 컴파일을 위한 매크로 : #if...#endif 
+	- 특정 조건에 따라 소스코드 일부를 삽입이나 삭제
+	- if 다음 조건이 참이라면, endif 전까지의 문장들을 실행하라
+	- \#ifndef...#endif ifndef 다음 조건이 정의되지 않았다면, endif전까지의 문장들을 실행하라
+
+	```
+	# define MUL 1
+	# define DIV 0
+	
+	int num1, num2;
+	printf("두 개의 정수 입력");
+	scanf("%d %d", &num1, &num2);
+	
+	#if MUL
+		printf("%d\n", num1*num2);
+	#endif
+	
+	#if DIV
+		printf("%d\n", num1/num2);
+	#endif
+	
+	```
+	
+	- \#if... #endif 사이에 #elif 나 #else 구문이 삽입되면 조건에 따라서 if 와 elif, else 사이에 하나만 컴파일된다는 뜻
+
+- 문자열 내에서 매크로
+	- 문자열 내에서는 매크로가 치환되지 않는다
+	- \#define STR(ABC) #ABC
+	- \# 연산자 : 매개변수 ABC에 전달되는 인자를 문자열 "ABC"로 치환하라는뜻
+	- 둘 이상의 문자열을 나란히 선언되면 연결된다
+	- \#define CON(UP,LO) UP##00##LO
+	- \##연산자 : 매개변수 
+
+	
+### 헤더파일
+
+- 하나의 프로그램을 여러가지 파일로 분할할 때, 해당 함수나 변수가 다른 파일에 있다는 것을 알리기 위해 extern 을 사용한다
+
+```
+extern int num;
+extern void Increment(void);
+```
+
+- 표준헤더파일의 포함: #include <표준파일이름>
+- 사용자정의헤더파일의 포함: #include "파일이름"
+
+> 구조체는 헤더파일에 포함해야 함. 그러나 한 파일에서 구조체가 두 번 불려오면 문제가 되기 때문에 매크로를 이용해서 중복삽입문제를 해결해야함.
+> 
+> ```
+> #ifndef __STDIV2_H__
+> #define __STDIV2_H__
+> 
+> typedef struct div
+> {
+> 	int quotient; //몫
+> 	int remainder; //나머지
+> }Div;
+> 
+> #endif
+> ```
+
+
+ 
